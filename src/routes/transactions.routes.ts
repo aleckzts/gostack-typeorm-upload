@@ -3,7 +3,7 @@ import { getCustomRepository } from 'typeorm';
 
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
-// import DeleteTransactionService from '../services/DeleteTransactionService';
+import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
 const transactionsRouter = Router();
@@ -29,7 +29,6 @@ transactionsRouter.post('/', async (request, response) => {
     type,
     category,
   });
-  console.log('Created', transaction);
 
   return response.send(transaction);
 });
@@ -37,19 +36,16 @@ transactionsRouter.post('/', async (request, response) => {
 transactionsRouter.delete('/:id', async (request, response) => {
   const { id } = request.params;
 
-  const transactionsRepository = getCustomRepository(TransactionsRepository);
-
-  const result = await transactionsRepository.delete(id);
-
-  if (!result.affected || result.affected <= 0) {
-    return response.status(400).send({ error: 'Transaction not found' });
-  }
+  const deleteTransaction = new DeleteTransactionService();
+  await deleteTransaction.execute({
+    id,
+  });
 
   return response.status(204).send();
 });
 
 transactionsRouter.post('/import', async (request, response) => {
-  // TODO
+  return response.json({ ok: true });
 });
 
 export default transactionsRouter;

@@ -23,7 +23,7 @@ class CreateTransactionService {
       throw new AppError('Invalid type, expected income or outcome');
     }
 
-    if (!Number.isNaN(Number(value))) {
+    if (Number.isNaN(Number(value))) {
       throw new AppError('Value has to be a number');
     }
 
