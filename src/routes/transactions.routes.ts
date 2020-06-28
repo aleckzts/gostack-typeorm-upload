@@ -1,22 +1,51 @@
 import { Router } from 'express';
+import { getCustomRepository } from 'typeorm';
 
-// import TransactionsRepository from '../repositories/TransactionsRepository';
-// import CreateTransactionService from '../services/CreateTransactionService';
+import TransactionsRepository from '../repositories/TransactionsRepository';
+import CreateTransactionService from '../services/CreateTransactionService';
 // import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
 const transactionsRouter = Router();
 
 transactionsRouter.get('/', async (request, response) => {
-  // TODO
+  const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+  const transactions = await transactionsRepository.find({
+    relations: ['category'],
+  });
+  const balance = await transactionsRepository.getBalance();
+
+  return response.json({ transactions, balance });
 });
 
 transactionsRouter.post('/', async (request, response) => {
-  // TODO
+  const { title, value, type, category } = request.body;
+
+  const createTransaction = new CreateTransactionService();
+  const transaction = await createTransaction.execute({
+    title,
+    value,
+    type,
+    category,
+  });
+  console.log('Created', transaction);
+
+  return response.send(transaction);
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
+  const { id } = request.params;
+
+  const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+  const result = await transactionsRepository.delete(id);
+
+  if (!result.affected || result.affected <= 0) {
+    return response.status(400).send({ error: 'Transaction not found' });
+  }
+
+  return response.status(204).send();
 });
 
 transactionsRouter.post('/import', async (request, response) => {

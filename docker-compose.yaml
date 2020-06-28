@@ -9,7 +9,6 @@ services:
         ports:
           - "5432:5432"
         volumes:
-          - ./pg_dbdata:/var/lib/postgresql/data
           - ./pg-init-scripts:/docker-entrypoint-initdb.d
         environment:
           - POSTGRES_USER=postgres
