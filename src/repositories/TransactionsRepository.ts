@@ -17,8 +17,8 @@ class TransactionsRepository extends Repository<Transaction> {
       (result, currentTransaction) => {
         result[currentTransaction.type] += currentTransaction.value;
         currentTransaction.type === 'income'
-          ? (result.total += currentTransaction.value)
-          : (result.total -= currentTransaction.value);
+          ? (result.total += Number(currentTransaction.value))
+          : (result.total -= Number(currentTransaction.value));
         return result;
       },
       {
